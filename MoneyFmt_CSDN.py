@@ -14,9 +14,25 @@ class MoneyFmt(object):
             strvalue = strvalue[:pos - 3] + ',' + strvalue[pos - 3:]
             pos -= 3
         if strvalue.startswith('-'):
-            print self.flag + '$' + strvalue[1:]
+            return self.flag + '$' + strvalue[1:]
         else:
-            print '$' + strvalue
+            return '$' + strvalue
+
+    def update(self, newvalue=None):
+        if newvalue is not None:
+            self.mvalue = float(newvalue)
+
+    def __nonzero__(self):
+        if (self.mvalue == 0):
+            return False
+        else:
+            return True
+
+    def __str__(self):
+        return self.dollarize()
+
+    def __repr__(self):
+        return repr(self.mvalue)
 
 a = MoneyFmt(13564161.33)
 a.dollarize()
