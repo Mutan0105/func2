@@ -3,7 +3,6 @@
 from datetime import datetime
 import shelve, os
 
-
 class userdatabase(object):
     def __init__(self, dbfile):
         self.db = {}
@@ -12,10 +11,7 @@ class userdatabase(object):
         self.dbfile = dbfile
         self.flag = False
 
-    def __del__(self):
-        data = shelve.open(self.dbfile, 'c')
-        data.update(self.db)
-        data.close()
+
 
     def login(self, user, pwd):
         if not self.db.has_key(user):
