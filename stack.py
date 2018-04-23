@@ -5,12 +5,12 @@ class stack(object):
         self.list_a = list_a
 
     def push(self,val):
-        print self.list_a.append(val)
-
+        self.list_a.append(val)
+        print self.list_a
 
     def pop(self,val2):
-        print self.list_a.remove(val2)
-
+        self.list_a.remove(val2)
+        print self.list_a
 
     def isempty(self):
         flag = len(self.list_a)
