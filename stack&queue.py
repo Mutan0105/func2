@@ -12,7 +12,7 @@ class sq(object):
 
     def unshift(self,val):
         a = []
-        a.append(val)
+        a.append(val)      #采用insert()方法可以直接实现列表头部插入数据
         self.list_a = a + self.list_a
         print self.list_a
 
