@@ -9,21 +9,27 @@ class customer(object):
 
 class item(object):
     "modify可以修改库存量，直接使用字典方法进行"
+    def __init__(self):
+        pass
     db = {'apple': 0, 'banana': 0, 'milk': 0}
 
     def modify(self):
         flag = True
         while flag:
             name = raw_input('需要修改的库存项目名称，若不存在将自动创建此项，结束修改请输入done。')
-            number = int(raw_input('更新该项目的存量'))
             if name == 'done':
                 flag = False
                 break
             else:
+                number = int(raw_input('更新该项目的存量'))
                 self.db[name] = number
 
     def showstock(self):
         print self.db
+
+    def new_db(self):
+        newdb = self.db
+        return newdb
 
 class cart(object):
     def __init__(self, name):
@@ -42,13 +48,15 @@ class cart(object):
         which_item = raw_input('商品名称')
         number = int(raw_input('数量'))
         i = item()
-        if self.db[which_item] < number:
+        c = i.new_db()
+
+        if c[which_item] < number:
             print '商品数量不够'
         else:
-            self.db[which_item] = number
-            self.Cartname = self.db
+            c[which_item] = number
+            self.Cartname = c
         print self.cart
-        print self.db
+        print c
 
 
 if __name__ == '__main__':
@@ -56,6 +64,7 @@ if __name__ == '__main__':
     a.showstock()
     a.modify()
     a.showstock()
+    a.new_db()
 
     run = cart('a')
     run.CreatCart()
