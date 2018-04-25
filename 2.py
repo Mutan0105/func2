@@ -1,69 +1,75 @@
 #!/usr/bin/env python
 # encoding: utf-8
 class Item(object):
-    def __init__(self, product, price):
-        self.product = product
-        self.price = price
+    #为了每个实例的更改都能被保存，这个地方不能放在初始化里
+    db = {'apple':4,'pear':1,'chocolate':3}
 
-    def __str__(self):
-        return '(%s, %.2f)' % (self.product, self.price)
-
-
-class Cart(object):
-    def __init__(self, name):
-        self.name = name
-        self.cartlist = {}
-
-    def showcart(self):
-        for c in self.cartlist:
-            print self.name, c, self.cartlist[c]
-
-    def appenditem(self, item, count=1):
-        if item not in self.cartlist:
-            self.cartlist[item] = count
+    def check(self,name):
+        if self.db[name] != 0:
+            return True
         else:
-            self.cartlist[item] += count
+            return False
 
-    def deleteitem(self, item, count=1):
-        if (item in self.cartlist) and self.cartlist[item] >= count:
-            self.cartlist[item] -= count
-        if self.cartlist[item] == 0:
-            self.cartlist.pop(item)
+    def delete(self,name):
+        if self.check(name) != 0:
+            self.db[name] = self.db[name]-1
+            return True
+        else:
+            print name,'already sold out'
+            return False
+
+#car中也有一个字典，用来维护每辆车中的物品
+class car(object):
+    def __init__(self,carname):
+        self.carname = carname
+        self.car  = {}
+
+    def addthing(self,name):
+        it = Item()
+        if it.delete(name) == True:
+
+            if self.car.has_key(name) == True:
+                self.car[name] = self.car[name]+1
+            else:
+                self.car[name] = 1
 
 
-class User(object):
-    def __init__(self, name):
-        self.name = name
-        self.userdb = []
+    def showthings(self):
+        for i in self.car:
+            print i,self.car[i]
 
-    def showuser(self):
-        print self.name, self.userdb
+#用户用一个list来存储生成的car对象，之后就用list下标就可以访问到实例
+class user(object):
+    def __init__(self):
+        self.index = 0
+        self.carlist = []
 
-    def appendcart(self, cart):
-        self.userdb.append(cart.name)
+    def addcar(self,carname):
+        ca = car(carname)
+        self.carlist.append(ca)
 
-    def deletecart(self, cart):
-        self.userdb.remove(cart.name)
+    def showcar(self):
+        for i in self.carlist:
+            print i.carname
+
+    def addthing(self,name,carname):
+        for i in self.carlist:
+            if i.carname == carname:
+                i.addthing(name)
+
+    def showthing(self):
+        for i in self.carlist:
+            print i.carname,'has things:'
+            i.showthings()
 
 
-if __name__ == '__main__':
-    i1 = Item('television', 4999)
-    i2 = Item('cellphone', 1999)
-    print i1, i2
-    c1 = Cart('cart1')
-    c2 = Cart('cart2')
-    c3 = Cart('cart3')
-    c1.appenditem(i1, 1)
-    c1.appenditem(i2, 1)
-    c2.appenditem(i2, 2)
-    c3.appenditem(i1, 2)
-    c1.showcart()
-    c2.showcart()
-    c3.showcart()
-    u1 = User('Tom')
-    u2 = User('Jerry')
-    u1.appendcart(c1)
-    u2.appendcart(c2)
-    u2.appendcart(c3)
-    u1.showuser()
-    u2.showuser()
+#调用的逻辑 我做的是用户调用车，车在添加物品是调用物体库
+if __name__ =='__main__':
+    us = user()
+    us.addcar('car1')
+    us.addcar('car2')
+    us.addthing('pear', 'car1')
+    us.addthing('pear', 'car2')
+    # us.addthing('chocolate', 'car1')
+    us.addthing('pear', 'car2')
+    us.showthing()
