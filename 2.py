@@ -1,92 +1,75 @@
 #!/usr/bin/env python
 # encoding: utf-8
-class message(object):
-   melib = []
-    #新生成一条消息,index = 0表示该消息未读
-    def makenew(self,me,nameto,namefrom):
-        index = 0
-        me1 = me+'   from   '+namefrom
-        li = [me1,nameto,index]
-        self.melib.append(li)
+class Item(object):
+    #为了每个实例的更改都能被保存，这个地方不能放在初始化里
+    db = {'apple':4,'pear':1,'chocolate':3}
 
-    def checkmessge(self,name):
-        for i in self.melib:
-            if i[1] == name and i[2] == 0:
-                print i[0]
-                i[2] = 1
-
-class Room(object):
-    #保存参加该房间的用户名称
-    namelist = []
-    #room message对所有成员可见
-    roommessage = []
-    def __init__(self,roomname,name1,name2):
-        self.roomname = roomname
-        self.namelist.append(name1)
-        self.namelist.append(name2)
-
-    def addmessage(self,me,name):
-        me1 = me + '  from  '+name
-        index = 0
-        li = [me1,index]
-        self.roommessage.append(li)
-
-    def showmessage(self):
-        for i in self.roommessage:
-            if i[1] == 0:
-                print i[0]
-                i[1] = 1
-
-
-class user(object):
-    user = []
-    roomlist = []
-
-    #用户属性 暂只设置了姓名
-    def __init__(self,name):
-        self.name = name
-        self.user.append(name)
-
-    #用户可以发送信息
-    def sendmessage(self,userto):
-        if userto in self.user:
-            me = raw_input('message:')
-            mes = message()
-            mes.makenew(me,userto,self.name)
+    def check(self,name):
+        if self.db[name] != 0:
+            return True
         else:
-            print 'no such user'
-    #用户可以接收信息
-    def accepymessage(self):
-        mes = message()
-        mes.checkmessge(self.name)
+            return False
 
-    #创建房间
-    def makeroom(self,usname,roomname):
-        ro = Room(roomname,usname,self.name)
-        self.roomlist.append(ro)
+    def delete(self,name):
+        if self.check(name) != 0:
+            self.db[name] = self.db[name]-1
+            return True
+        else:
+            print name,'already sold out'
+            return False
 
-    #向房间中发信息
-    def talkroom(self,roomname,mes):
-        for i in self.roomlist:
-            if i.roomname == roomname:
-                i.addmessage(mes,self.name)
+#car中也有一个字典，用来维护每辆车中的物品
+class car(object):
+    def __init__(self,carname):
+        self.carname = carname
+        self.car  = {}
 
-    #接收房间中的信息
-    def showroommessage(self,roomname):
-        for i in self.roomlist:
-            if i.roomname == roomname:
-                i.showmessage()
+    def addthing(self,name):
+        it = Item()
+        if it.delete(name) == True:
 
-if __name__ == '__main__':
-    u1 = user('A')
-    u2 = user('B')
-    u3 = user('C')
-    u1.makeroom('B','room1')
-    u1.talkroom('room1','hello B')
-    u1.makeroom('C','room2')
-    u1.talkroom('room2','hello C')
-    u2.showroommessage('room1')
-    u3.showroommessage('room2')
-    u2.talkroom('room1','this is B')
-    u1.showroommessage('room1')
-    u1.showroommessage('room2')
+            if self.car.has_key(name) == True:
+                self.car[name] = self.car[name]+1
+            else:
+                self.car[name] = 1
+
+
+    def showthings(self):
+        for i in self.car:
+            print i,self.car[i]
+
+#用户用一个list来存储生成的car对象，之后就用list下标就可以访问到实例
+class user(object):
+    def __init__(self):
+        self.index = 0
+        self.carlist = []
+
+    def addcar(self,carname):
+        ca = car(carname)
+        self.carlist.append(ca)
+
+    def showcar(self):
+        for i in self.carlist:
+            print i.carname
+
+    def addthing(self,name,carname):
+        for i in self.carlist:
+            if i.carname == carname:
+                i.addthing(name)
+
+    def showthing(self):
+        for i in self.carlist:
+            print i.carname,'has things:'
+            i.showthings()
+
+
+#调用的逻辑 我做的是用户调用车，车在添加物品是调用物体库
+if __name__ =='__main__':
+    us = user()
+    us.addcar('car1')
+    us.addcar('car2')
+    us.addthing('pear', 'car1')
+    us.addthing('pear', 'car2')
+    # us.addthing('chocolate', 'car1')
+    us.addthing('pear', 'car2')
+    us.showthing()
